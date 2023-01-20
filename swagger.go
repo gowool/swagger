@@ -26,7 +26,7 @@ type Config struct {
 	OAuth *OAuthConfig `mapstructure:"oauth"`
 }
 
-func (cfg *Config) init() {
+func (cfg *Config) Init() {
 	if cfg.URL == "" {
 		cfg.URL = "doc.json"
 	}
@@ -64,19 +64,19 @@ type OAuthConfig struct {
 }
 
 type Swagger struct {
-	cfg   Config
+	cfg   *Config
 	index *template.Template
 	re    *regexp.Regexp
 	h     *webdav.Handler
 	once  sync.Once
 }
 
-func New(cfg Config) *Swagger {
+func New(cfg *Config) *Swagger {
 	return NewWithTemplate(cfg, nil)
 }
 
-func NewWithTemplate(cfg Config, index *template.Template) *Swagger {
-	cfg.init()
+func NewWithTemplate(cfg *Config, index *template.Template) *Swagger {
+	cfg.Init()
 
 	if index == nil {
 		index = template.Must(template.New("swagger_index.html").Parse(indexTemplate))
