@@ -5,7 +5,7 @@ import (
 	"github.com/gowool/swagger"
 	_ "github.com/gowool/swagger/example/docs"
 	"github.com/gowool/wool"
-	"log"
+	"os"
 )
 
 // @title Swagger Example API
@@ -23,14 +23,15 @@ import (
 // @host petstore.swagger.io
 // @BasePath /api/v1
 func main() {
-	w := wool.New(nil)
-	swg := swagger.New(swagger.Config{})
+	w := wool.New()
+	swg := swagger.New(&swagger.Config{})
 	w.Get("/swagger/...", swg.Handler)
 
-	srv := wool.NewServer(wool.ServerConfig{
+	srv := wool.NewServer(&wool.ServerConfig{
 		Address: ":1323",
-	}, nil)
-	if err := srv.Start(context.Background(), w); err != nil {
-		log.Fatal(err)
+	})
+	if err := srv.StartC(context.Background(), w); err != nil {
+		wool.Logger().Error("server error", err)
+		os.Exit(1)
 	}
 }
