@@ -25,7 +25,7 @@ import (
 func main() {
 	w := wool.New()
 	swg := swagger.New(&swagger.Config{})
-	w.Get("/swagger/...", swg.Handler)
+	w.GET("/swagger/...", swg.Handler)
 
 	srv := wool.NewServer(&wool.ServerConfig{
 		Address: ":1323",
