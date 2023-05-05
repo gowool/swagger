@@ -35,6 +35,7 @@ import (
     "github.com/gowool/swagger"
     _ "github.com/gowool/swagger/example/docs"
     "github.com/gowool/wool"
+	"golang.org/x/exp/slog"
     "os"
 )
 
@@ -53,15 +54,16 @@ import (
 // @host petstore.swagger.io
 // @BasePath /api/v1
 func main() {
-    w := wool.New()
+	logger := slog.New(slog.HandlerOptions{Level: slog.LevelDebug}.NewJSONHandler(os.Stdout))
+    w := wool.New(logger.WithGroup("wool"))
     swg := swagger.New(&swagger.Config{})
     w.GET("/swagger/...", swg.Handler)
     
     srv := wool.NewServer(&wool.ServerConfig{
         Address: ":1323",
-    })
+    }, logger.WithGroup("server"))
     if err := srv.StartC(context.Background(), w); err != nil {
-        wool.Logger().Error("server error", err)
+		srv.Log.Error("server error", err)
         os.Exit(1)
     }
 }
